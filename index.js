@@ -4,7 +4,7 @@ const mysql = require('mysql');
 const url = require('url');
 const auth = require('./auth.json');
 
-const app = express();
+const app = express(); // remove this later
 app.use(express.json());
 
 const PORT = auth.port;                    // Port used to get data remotely
