@@ -103,13 +103,13 @@ app.get('/:table/:id', (req, res) => {
 // Handle HTTP POST requests
 app.post('/:table', (req, res) => {
     const { table } = req.params;
-    const { name, data, pass } = req.body;
+    const { name, data } = req.body;
 
     if (!name) {
         res.status(400).send({ message: 'No file name provided.' });
     } else if (!data) {
         res.status(400).send({ message: 'No file data provided.' });
-    } else if (pass !== apiKey) {
+    } else if (req.get('api-key') !== apiKey) {
         res.status(401).send({ message: 'Unauthorized.' });
     } else {
         // Query DB for current highest ID, lowest (previously) deleted ID, and any entries with the same name field
@@ -142,11 +142,11 @@ app.post('/:table', (req, res) => {
 // Handle HTTP DELETE requests
 app.get('/:table/:id', (req, res) => {
     const { table, id } = req.params;
-    const { name, pass } = req.body;
+    const { name } = req.body;
 
     if (!name) {
         res.status(400).send({ message: 'No file name provided.' });
-    } else if (pass !== apiKey) {
+    } else if (req.get('api-key') !== apiKey) {
         res.status(401).send({ message: 'Unauthorized.' });
     } else {
         // Query MySQL database for requested data
@@ -174,11 +174,11 @@ app.get('/:table/:id', (req, res) => {
 // Handle HTTP PATCH requests
 app.patch('/:table/:id', (req, res) => {
     const { table, id } = req.params;
-    const { name, data, pass } = req.body;
+    const { name, data } = req.body;
 
     if (!name) {
         res.status(400).send({ message: 'No file name provided.' });
-    } else if (pass !== apiKey) {
+    } else if (req.get('api-key') !== apiKey) {
         res.status(401).send({ message: 'Unauthorized.' });
     } else {
         dbCon.query(`UPDATE ${table}
