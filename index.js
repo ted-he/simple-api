@@ -4,6 +4,8 @@ const mysql = require('mysql');
 const url = require('url');
 const auth = require('./auth.json');
 
+// Replace API protocol with headers instead of body
+
 const app = express();
 app.use(express.json());
 
@@ -57,7 +59,10 @@ app.get('/:table', (req, res) => {
                     queryFilter += `\nAND ${keys[i]} = '${values[i]}'`;
                 }
 
-                dbCon.query(`SELECT * FROM ${table} WHERE id >= 0 ${queryFilter};`, function (err, result) {
+                dbCon.query(`SELECT *
+                             FROM ${table}
+                             WHERE id >= 0
+                             ${queryFilter};`, function (err, result) {
                     if (err && err.sqlState == '42S22') res.status(404).send({ 'message': "Property not found." });
                     else if (err) throw err;
                     res.status(200).send(result);
@@ -66,6 +71,7 @@ app.get('/:table', (req, res) => {
         });
     }
 });
+
 app.get('/:table/:id', (req, res) => {
     const { table, id } = req.params;
     const { name } = req.body;
@@ -76,7 +82,9 @@ app.get('/:table/:id', (req, res) => {
         res.status(401).send({ message: 'Unauthorized.' });
     } else {
         // Query DB for requested data
-        dbCon.query(`SELECT * FROM ${table} WHERE id = ${id};`, function (err, result) {
+        dbCon.query(`SELECT *
+                     FROM ${table}
+                     WHERE id = ${id};`, function (err, result) {
             if (err) throw err;
 
             if (result[0].id === null) {
@@ -142,7 +150,9 @@ app.get('/:table/:id', (req, res) => {
         res.status(401).send({ message: 'Unauthorized.' });
     } else {
         // Query MySQL database for requested data
-        dbCon.query(`SELECT * FROM ${table} WHERE id = ${id};`, function (err, result) {
+        dbCon.query(`SELECT *
+                     FROM ${table}
+                     WHERE id = ${id};`, function (err, result) {
             if (err) throw err;
 
             if (result[0].id == null) {
@@ -150,8 +160,9 @@ app.get('/:table/:id', (req, res) => {
             } else if (result[0].name !== name) {
                 res.status(400).send({ message: 'ID does not match filename.' });
             } else {
-                dbCon.query(`INSERT INTO ${table}_del_id (id) VALUES (${id});` +
-                            `DELETE FROM ${table} WHERE id = ${id};`, function (err, result) {
+                dbCon.query(`INSERT INTO ${table}_del_id (id) VALUES (${id}); \n
+                             DELETE FROM ${table}
+                             WHERE id = ${id};`, function (err, result) {
                     if (err) throw err;
                     res.status(400).send({ message: 'File deleted.' });
                 });
@@ -170,7 +181,9 @@ app.patch('/:table/:id', (req, res) => {
     } else if (pass !== apiKey) {
         res.status(401).send({ message: 'Unauthorized.' });
     } else {
-        dbCon.query(`UPDATE ${table} SET data = '${data}' WHERE id = ${id};`, function (err, result) {
+        dbCon.query(`UPDATE ${table}
+                     SET data = '${data}'
+                     WHERE id = ${id};`, function (err, result) {
             if (err) throw err;
 
             res.status(200).send({ message: 'File data updated.' });
