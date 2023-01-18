@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 
 const PORT = auth.port;                    // Port used to get data remotely
-const apiKey = auth["api-key"];              // Password used to get data remotely
+const apiKey = auth["api-key"];            // Password used to get data remotely
 
 // Initialize MySQL DB connection
 var dbCon = mysql.createConnection({
